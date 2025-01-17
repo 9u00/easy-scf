@@ -1,7 +1,7 @@
 <?php
 namespace EasyScf;
 
-class Auth extends Api
+class Auth extends Controller
 {
     public $config;
     public function __construct($db, $dbRead, $redis = null)

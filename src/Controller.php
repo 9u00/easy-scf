@@ -1,7 +1,7 @@
 <?php
 namespace EasyScf;
 
-class Api
+class Controller
 {
     public $response;
     public $uid                 = 0;
