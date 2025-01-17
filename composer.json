@@ -5,12 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "EasyScf\\": "src/",
-            "Scf\\Controller\\": "/../controller",
-            "Scf\\Model\\": "/../model",
-            "Scf\\Validate\\": "/../validate",
-            "Layer\\Medoo\\": "/../../../opt/Medoo-master/src",
-            "Layer\\JWT\\": "/../../../opt"
+            "EasyScf\\": "src/"
         }
     },
     "authors": [
