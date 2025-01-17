@@ -25,7 +25,7 @@ class Scf
         if (!$item) {
             return [
                 'code' => 404,
-                'msg' => '资源不存在'
+                'info' => '资源不存在'
             ];
         }
 
@@ -39,7 +39,7 @@ class Scf
         if (in_array($function, $c->disabledFun) || $c->disabledFun == '*') {
             return [
                 'code' => 404,
-                'msg' => '资源不存在或禁用'
+                'info' => '资源不存在或禁用'
             ];
         }
 
