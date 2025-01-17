@@ -2,6 +2,7 @@
 
 return [
     'userModel' => 'user',
+    'userInfo' => 'authInfo',
     'db' => [
         'read' => [
             'database_type' => 'mysql',
