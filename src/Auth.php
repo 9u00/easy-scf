@@ -33,13 +33,12 @@ class Auth extends Controller
             }
         }
 
-//        var_dump($result);
-
         if ($result['status']) {
             $this->uid  = $result['data']['user_id'];
             $userModelStr = '\Model\\' . $this->config['userModel'];
+            $authInfoStr = $this->config['authInfo'];
             $usersModel = new $userModelStr($this->db, $this->dbRead);
-            $this->user = $usersModel->getD($this->uid);
+            $this->user = $usersModel->$authInfoStr($this->uid);
             if (!$this->user && (in_array($function, $needLoginFun) || $needLoginFun == '*')) {
                 $this->response = $this->error('用户不存在', 401);
                 return false;
