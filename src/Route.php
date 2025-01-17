@@ -17,9 +17,9 @@ class Route {
         $pattern = '/.*?\/(test|release)\/' . $functionName . '(.*)/';
         preg_match($pattern, $path, $matches);
         if ($matches[1]) {// 存在环境，非定时任务
-            $path = $matches[2] ?: '/';
+            $this->path = $matches[2] ?: '/';
         } else {// 定时任务
-            $path = $event->Message;
+            $this->path = $event->Message;
         }
 
         $this->method   = $event->httpMethod ?: 'GET';
@@ -30,7 +30,7 @@ class Route {
 
     public function init() {
         //路径
-        $path       = $this->path ?: '/';
+        $path       = $this->path;
 
         foreach ($this->routes[$this->method] as $pattern => $functionStr) {
             //替换'/'为'\/'，并获取参数名
