@@ -33,6 +33,7 @@ class Route {
         $path       = $this->path;
 
         foreach ($this->routes[$this->method] as $pattern => $functionStr) {
+            $paramsKey = [];
             //替换'/'为'\/'，并获取参数名
             $pattern = str_replace('/', '\/', $pattern);
             preg_match_all('/\{([a-zA-Z]+)\}/', $pattern, $matches);
