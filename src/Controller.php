@@ -19,6 +19,8 @@ class Controller
     public $setting;
     public $redis;
 
+    public $headers;
+
     //构造函数
     public function __construct($db, $dbRead, $redis = null) {
         $this->db       = $db;
@@ -186,5 +188,9 @@ class Controller
 
     public function setSetting($setting) {
         $this->setting = $setting;
+    }
+
+    public function setHeaders($headers) {
+        $this->headers = $headers;
     }
 }
