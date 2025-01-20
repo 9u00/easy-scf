@@ -5,7 +5,8 @@ class JWT {
     private $secret;
 
     public function __construct() {
-        $this->secret = $_ENV['JWT_SECRET'];
+        $config = require 'config.php';
+        $this->secret = $config['jwt']['secret'] ?: $_ENV['JWT_SECRET'];
     }
 
     /**
@@ -39,7 +40,7 @@ class JWT {
         if (!$token) {
             return $result;
         } else {
-            $data = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($this->secret, 'HS256'), array('HS256'));
+            $data = \Firebase\JWT\JWT::decode($token, new \Firebase\JWT\Key($this->secret, 'HS256'));
             if (!$data) {
                 $result['msg']    = 'verify error';
                 return $result;
