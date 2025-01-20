@@ -56,7 +56,7 @@ class Controller
         $list = $this->model->selectD($map);
         $count = $this->model->countD($oMap);
         $data = [
-            'results'   => $list ?: [],
+            'data'      => $list ?: [],
             'count'     => $count ?: 0,
             'next'      => $count > $pageSize * $page,
             'previous'  => $page > 1,
