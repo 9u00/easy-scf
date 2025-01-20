@@ -14,7 +14,7 @@
             "email": "iamxzgsl@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "dev-main",
     "require": {
         "php": ">=7.2",
         "firebase/php-jwt": "dev-main"
