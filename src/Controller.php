@@ -18,7 +18,7 @@ class Controller
     public $dbRead;
     public $setting;
     public $redis;
-
+    public $ip;
     public $headers;
 
     //构造函数
@@ -188,6 +188,10 @@ class Controller
 
     public function setSetting($setting) {
         $this->setting = $setting;
+    }
+
+    public function setIp($ip) {
+        $this->ip = $ip;
     }
 
     public function setHeaders($headers) {

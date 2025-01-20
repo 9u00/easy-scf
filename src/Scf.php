@@ -62,7 +62,8 @@ class Scf
         $c->setUid($auth->uid);
         $c->setUser($auth->user);
         $c->setHeaders($this->headers);
-        
+        $c->setIp($this->event->requestContext->sourceIp);
+
         $result = $c->$function($params, $body);
         if ($auth->uid && $this->event->httpMethod != 'GET' && $redis) {
             $redis->del($key);
