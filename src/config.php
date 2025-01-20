@@ -26,7 +26,7 @@ return [
             'password' => $_ENV['REDIS_PASSWORD'],
         ],
         'jwt' => [
-            'secret' => '',
+            'secret' => $_ENV['JWT_SECRET'],
         ]
     ]
 ];
