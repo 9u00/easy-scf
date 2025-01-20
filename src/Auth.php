@@ -21,18 +21,17 @@ class Auth extends Controller
         $mbd_t = $c_h['authorization'];
         $token = $mbd_t ?: $cookie['authorization'];
 
-        $result = [];
         if ($token) {
             try {
-                $result = (new JWT())->check($token);
+                list($result, $data) = (new \EasyScf\JWT())->check($token);
             } catch (\Exception $e) {
                 $this->response = $this->error('鉴权失败', 401);
                 return false;
             }
         }
 
-        if ($result['status']) {
-            $this->uid  = $result['data']['user_id'];
+        if ($result) {
+            $this->uid  = $data->user_id;
             $userModelStr = '\Model\\' . $this->config['userModel'];
             $authInfoStr = $this->config['authInfo'];
             $usersModel = new $userModelStr($this->db, $this->dbRead);
@@ -44,7 +43,7 @@ class Auth extends Controller
             $this->user['token'] = $token;
             return true;
         } else if (in_array($function, $needLoginFun) || $needLoginFun == '*') {
-            $this->response = $this->error($result['msg'], 401);
+            $this->response = $this->error($data, 401);
             return false;
         }
 

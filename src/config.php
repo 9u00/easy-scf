@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'userModel' => 'user',
-    'userInfo' => 'authInfo',
+    'userModel' => $_ENV['USER_MODEL'],
+    'authInfo' => $_ENV['AUTH_INFO'],
     'db' => [
         'read' => [
             'database_type' => 'mysql',
@@ -28,5 +28,6 @@ return [
         'jwt' => [
             'secret' => $_ENV['JWT_SECRET'],
         ]
-    ]
+    ],
+    'routes' => $_ENV['ROUTES'],
 ];

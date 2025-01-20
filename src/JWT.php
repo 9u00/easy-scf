@@ -18,11 +18,11 @@ class JWT {
         $result = $this->verifyToken($token);
         if ($result['status']) {
             if ($result['data']->exp < time()) {
-                return false;
+                return [false, 'token expired'];
             }
-            return $result['data'];
+            return ['true', $result['data']];
         } else {
-            return false;
+            return [false, $result['msg']];
         }
     }
 

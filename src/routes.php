@@ -1,7 +1,3 @@
 <?php
-
-return [
-    'GET' => [
-        '/' => 'Index/index',
-    ],
-];
+$config = require __DIR__ . '/config.php';
+return require $config['routes'];
