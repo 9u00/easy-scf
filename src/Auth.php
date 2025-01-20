@@ -24,10 +24,8 @@ class Auth extends Controller
         $result = [];
         if ($token) {
             try {
-                $result = \JWT\JWT::verifyToken($token);
+                $result = (new JWT())->check($token);
             } catch (\Exception $e) {
-                var_dump($e->getMessage());
-                var_dump($token);
                 $this->response = $this->error('鉴权失败', 401);
                 return false;
             }
