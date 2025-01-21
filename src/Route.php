@@ -36,7 +36,7 @@ class Route {
         foreach ($this->routes[$this->method] as $pattern => $functionStr) {
             //替换 path 为正则表达式
             $pattern = $patternK = str_replace('/', '\/', $pattern);
-            $pattern = preg_replace('/\{[a-zA-Z-_]+\}?/', '([a-zA-Z0-9-_]+)', $pattern);
+            $pattern = preg_replace('/\{[a-zA-Z-_]+\}?/', '([0-9]+)', $pattern);
 
             //匹配路由
             if (preg_match("/^{$pattern}$/", $path, $matches)) {
