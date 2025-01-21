@@ -21,6 +21,7 @@ class Route {
         } else {// 定时任务
             $this->path = $event->Message;
         }
+        $this->path = '/' . trim($this->path, '/');
 
         $this->method   = $event->httpMethod ?: 'GET';
         $this->params   = json_decode(json_encode($event->queryString), true);//获取param参数
@@ -31,28 +32,18 @@ class Route {
     public function init() {
         //路径
         $path       = $this->path;
-
+        
         foreach ($this->routes[$this->method] as $pattern => $functionStr) {
-            $paramsKey = [];
-            //替换'/'为'\/'，并获取参数名
-            $pattern = str_replace('/', '\/', $pattern);
-            preg_match_all('/\{([a-zA-Z]+)\}/', $pattern, $matches);
-            foreach ($matches[1] as $k => $v) {
-                $paramsKey[] = $v;
-            }
-
-            //替换参数为正则表达式
-            $pattern = preg_replace('/\{[a-zA-Z]+\}/', '([a-zA-Z0-9-_]+)', $pattern);
+            //替换 path 为正则表达式
+            $pattern = $patternK = str_replace('/', '\/', $pattern);
+            $pattern = preg_replace('/\{[a-zA-Z-_]+\}?/', '([a-zA-Z0-9-_]+)', $pattern);
 
             //匹配路由
             if (preg_match("/^{$pattern}$/", $path, $matches)) {
-
-                //设置参数
-                if ($paramsKey) {
-                    foreach ($paramsKey as $k => $v) {
-                        $params[$v] = $matches[$k + 1];
-                    }
-                    $this->params = array_merge($this->params, $params);
+                //获取参数
+                preg_match_all('/\{([a-zA-Z_-]+)\}?/', $patternK, $matchesK);
+                foreach ($matchesK[1] as $k => $v) {
+                    $this->params[$v] = $matches[$k + 1];
                 }
                 $functionArr = explode('/', $functionStr);
                 break;
@@ -61,7 +52,7 @@ class Route {
 
         // 未定义的路由
         if (!$functionArr) {
-            return false;
+            return [false];
         }
 
         return [
