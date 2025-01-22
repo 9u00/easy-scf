@@ -1,5 +1,6 @@
 <?php
 namespace EasyScf;
+use Hashids\Hashids;
 
 class Controller
 {
@@ -20,12 +21,14 @@ class Controller
     public $redis;
     public $ip;
     public $headers;
-
+    public $hashidsModel;
     //构造函数
     public function __construct($db, $dbRead, $redis = null) {
         $this->db       = $db;
         $this->dbRead   = $dbRead;
         $this->redis    = $redis;
+        $config         = require 'config.php';
+        $this->hashidsModel = new Hashids($config['hashId']['salt'], $config['hashId']['length']);
     }
 
     //获取数据
@@ -59,6 +62,7 @@ class Controller
             'next'      => $count > $pageSize * $page,
             'previous'  => $page > 1,
         ];
+        $data['data'] = $this->datasEncodeHash($data['data']);
         return $this->success($data);
     }
 
@@ -74,6 +78,7 @@ class Controller
         if (!$data) {
             return $this->error('数据不存在');
         }
+        $data['data'] = $this->dataEncodeHash($data['data']);
         return $this->success(['data' => $data]);
     }
 
@@ -93,8 +98,8 @@ class Controller
         if (!$id) {
             return $this->error('创建失败', 500);
         }
-        if (in_array($this->model->id, $this->model->hashIds)) {// 使用hashId
-            $id = $this->model->encodeHashId($id);
+        if (in_array($this->model->id, $this->model->hashids)) {// 使用hashId
+            $id = $this->encodeHash($id);
         }
         return $this->success(['data' => ['id' => $id] ], '创建成功', 201);
     }
@@ -107,6 +112,8 @@ class Controller
      * @return array|void
      */
     public function edit($params, $body) {
+        $params = $this->dataDecodeHash($params);
+        $body = $this->dataDecodeHash($body);
         $id = $params['id'];
         foreach ($body as &$v) {
             if (is_array($v)) {
@@ -128,6 +135,7 @@ class Controller
      * @return array|void
      */
     public function delete($params, $body) {
+        $params = $this->dataDecodeHash($params);
         $result = $this->model->deleteD(['id' => $params['id']]);
 
         if (!$result) {
@@ -181,6 +189,9 @@ class Controller
             foreach ($request as $k => $v) {
                 $item = strstr($k, '[', true) ?: $k;
                 $item && in_array($item, $this->model->screenFields) && $map[$k] = $v;
+                if ($this->model->hashids && in_array($item, $this->model->hashids)) {
+                    $map[$k] = $this->decodeHash($v);
+                }
             }
         }
         $this->model->deleteField && $map[$this->model->deleteField] = null;
@@ -197,5 +208,51 @@ class Controller
 
     public function setHeaders($headers) {
         $this->headers = $headers;
+    }
+
+    public function encodeHash($id) {
+        return $this->hashidsModel->encode($id);
+    }
+
+    public function decodeHash($hash) {
+        return $this->hashidsModel->decode($hash)[0];
+    }
+
+    public function dataEncodeHash($data) {
+        if (!$this->model->hashids) {
+            return $data;
+        }
+        foreach ($data as $k => &$v) {
+            if (in_array($k, $this->model->hashids)) {
+                $v = $this->encodeHash($v);
+            }
+        }
+        return $data;
+    }
+
+    public function datasEncodeHash($datas) {
+        foreach ($datas as &$data) {
+            $data = $this->dataEncodeHash($data);
+        }
+        return $datas;
+    }
+
+    public function dataDecodeHash($data) {
+        if (!$this->model->hashids) {
+            return $data;
+        }
+        foreach ($data as $k => &$v) {
+            if (in_array($k, $this->model->hashids)) {
+                $v = $this->decodeHash($v);
+            }
+        }
+        return $data;
+    }
+
+    public function datasDecodeHash($datas) {
+        foreach ($datas as &$data) {
+            $data = $this->dataDecodeHash($data);
+        }
+        return $datas;
     }
 }
