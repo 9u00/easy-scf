@@ -17,6 +17,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.2",
-        "firebase/php-jwt": "^6.0"
+        "firebase/php-jwt": "^6.0",
+        "hashids/hashids": "^4.0"
     }
 }
