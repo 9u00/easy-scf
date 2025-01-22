@@ -43,6 +43,8 @@ class Controller
      * @return array|void
      */
     public function getList($params, $body) {
+        $params = $this->dataDecodeHash($params);
+        $body = $this->dataDecodeHash($body);
         $page     = $params['page'] ?: 1;
         $pageSize = $params['page_size'] ?: 15;
         $limit    = $pageSize * ($page - 1);
@@ -73,6 +75,8 @@ class Controller
      * @return array|void
      */
     public function getDetail($params, $body) {
+        $params = $this->dataDecodeHash($params);
+        $body = $this->dataDecodeHash($body);
         $map = $this->getMap($params);
         $data = $this->model->getD($map);
         if (!$data) {
@@ -89,6 +93,7 @@ class Controller
      * @return array|void
      */
     public function create($params, $body) {
+        $body = $this->dataDecodeHash($body);
         foreach ($body as &$v) {
             if (is_array($v)) {
                 $v = json_encode($v);
