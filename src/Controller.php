@@ -43,10 +43,8 @@ class Controller
      * @return array|void
      */
     public function getList($params, $body) {
-        $params = $this->dataDecodeHash($params);
-        $body = $this->dataDecodeHash($body);
         $page     = $params['page'] ?: 1;
-        $pageSize = $params['page_size'] ?: 15;
+        $pageSize = $params['page_size'] ?: 999;
         $limit    = $pageSize * ($page - 1);
         $order    = $params['order'] ?: 'id';
         $sort     = $params['sort'] ?: 'DESC';
@@ -75,14 +73,12 @@ class Controller
      * @return array|void
      */
     public function getDetail($params, $body) {
-        $params = $this->dataDecodeHash($params);
-        $body = $this->dataDecodeHash($body);
         $map = $this->getMap($params);
         $data = $this->model->getD($map);
         if (!$data) {
             return $this->error('数据不存在');
         }
-        $data['data'] = $this->dataEncodeHash($data['data']);
+        $data = $this->dataEncodeHash($data);
         return $this->success(['data' => $data]);
     }
 
@@ -223,40 +219,58 @@ class Controller
         return $this->hashidsModel->decode($hash)[0];
     }
 
-    public function dataEncodeHash($data) {
-        if (!$this->model->hashids) {
+    public function dataEncodeHash($data, $hashids = []) {
+        if (!$data) {
+            return $data;
+        }
+        if (!$hashids) {
+            $hashids = $this->model->hashids;
+        }
+        if (!$hashids) {
             return $data;
         }
         foreach ($data as $k => &$v) {
-            if (in_array($k, $this->model->hashids)) {
+            if (in_array($k, $hashids)) {
                 $v = $this->encodeHash($v);
             }
         }
         return $data;
     }
 
-    public function datasEncodeHash($datas) {
+    public function datasEncodeHash($datas, $hashids = []) {
+        if (!$datas) {
+            return $datas;
+        }
         foreach ($datas as &$data) {
-            $data = $this->dataEncodeHash($data);
+            $data = $this->dataEncodeHash($data, $hashids);
         }
         return $datas;
     }
 
-    public function dataDecodeHash($data) {
-        if (!$this->model->hashids) {
+    public function dataDecodeHash($data, $hashids = []) {
+        if (!$data) {
+            return $data;
+        }
+        if (!$hashids) {
+            $hashids = $this->model->hashids;
+        }
+        if (!$hashids) {
             return $data;
         }
         foreach ($data as $k => &$v) {
-            if (in_array($k, $this->model->hashids)) {
+            if (in_array($k, $hashids)) {
                 $v = $this->decodeHash($v);
             }
         }
         return $data;
     }
 
-    public function datasDecodeHash($datas) {
+    public function datasDecodeHash($datas, $hashids = []) {
+        if (!$datas) {
+            return $datas;
+        }
         foreach ($datas as &$data) {
-            $data = $this->dataDecodeHash($data);
+            $data = $this->dataDecodeHash($data, $hashids);
         }
         return $datas;
     }
