@@ -30,4 +30,8 @@ return [
         ]
     ],
     'routes' => $_ENV['ROUTES'],
+    'hashId' => [
+        'salt' => $_ENV['HASHID_SALT'],
+        'length' => $_ENV['HASHID_LENGTH'],
+    ]
 ];
