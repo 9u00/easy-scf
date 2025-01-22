@@ -51,8 +51,6 @@ class Controller
         $map['LIMIT'] = [$limit, $pageSize];
         $map['ORDER'] = [$order => $sort];
 
-        var_dump($map);
-
         $list = $this->model->selectD($map);
         $count = $this->model->countD($oMap);
         $data = [
@@ -95,7 +93,10 @@ class Controller
         if (!$id) {
             return $this->error('创建失败', 500);
         }
-        return $this->success(['data' => ['id' => (int)$id] ], '创建成功', 201);
+        if (!$this->model->hashId) {// 不使用hashId
+            $id = (int)$id;
+        }
+        return $this->success(['data' => ['id' => $id] ], '创建成功', 201);
     }
 
     /**
