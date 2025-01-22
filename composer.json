@@ -5,7 +5,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "EasyScf\\": "src/"
+            "EasyScf\\": "src/",
+            "Hashids\\": "vendor/hashids/hashids/src/"
         }
     },
     "authors": [
