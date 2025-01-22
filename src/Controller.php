@@ -28,7 +28,7 @@ class Controller
         $this->dbRead   = $dbRead;
         $this->redis    = $redis;
         $config         = require 'config.php';
-        $this->hashidsModel = new Hashids($config['hashId']['salt'] . $this->model->table, $config['hashId']['length']);
+        $this->hashidsModel = new Hashids($config['hashId']['salt'], $config['hashId']['length']);
     }
 
     //获取数据
