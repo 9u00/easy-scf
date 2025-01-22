@@ -14,16 +14,16 @@ class Model
     public $textFunctions;
 
     public $id = 'id';
-    public $hashId = false;
+    public $hashIds = [];
     public $config;
-    public $hashids;
+    public $hashidsModel;
 
     public function __construct($db = null, $dbRead = null)
     {
         $this->db = $db;
         $this->dbRead = $dbRead;
         $this->config = require 'config.php';
-        $this->hashids = new Hashids($this->config['hashId']['salt'], $this->config['hashId']['length']);
+        $this->hashidsModel = new Hashids($this->config['hashId']['salt'], $this->config['hashId']['length']);
     }
 
     public function insertD($data)
@@ -32,8 +32,8 @@ class Model
         if (!$this->db->id()) {
             $this->db->debug()->insert($this->table, $data);
         }
-        if ($this->hashId) {
-            return $this->hashids->encode($this->db->id());
+        if ($this->hashIds) {
+            return $this->hashidsModel->encode($this->db->id());
         }
         return $this->db->id();
     }
@@ -43,8 +43,10 @@ class Model
         if (!is_array($map)) {
             $map = [$this->id => $map];
         }
-        if ($this->hashId && $map[$this->id]) {
-            $map[$this->id] = $this->hashids->decode($map[$this->id])[0];
+        if ($this->hashIds) {
+            foreach ($this->hashIds as $key) {
+                $map[$key] && $map[$key] = $this->hashidsModel->decode($map[$key])[0];
+            }
         }
         $result = $this->db->update($this->table, $data, $map);
         if ($result->rowCount() == 0) {
@@ -62,8 +64,10 @@ class Model
         if (!is_array($map)) {
             $map = [$this->id => $map];
         }
-        if ($this->hashId && $map[$this->id]) {
-            $map[$this->id] = $this->hashids->decode($map[$this->id])[0];
+        if ($this->hashIds) {
+            foreach ($this->hashIds as $key) {
+                $map[$key] && $map[$key] = $this->hashidsModel->decode($map[$key])[0];
+            }
         }
         $result = $this->db->delete($this->table, $map);
         if ($result->rowCount() == 0) {
@@ -90,10 +94,10 @@ class Model
         if (!$list) {
             $this->dbRead->debug()->select($this->table, $fields, $map);
         }
-        if ($this->hashId) {
+        if ($this->hashIds) {
             foreach ($list as &$v) {
-                if ($v[$this->id]) {
-                    $v[$this->id] = $this->hashids->encode($v[$this->id]);
+                foreach ($this->hashIds as $key) {
+                    $v[$key] && $v[$key] = $this->hashidsModel->encode($v[$key]);
                 }
             }
         }
@@ -150,8 +154,10 @@ class Model
             $this->dbRead->debug()->get($this->table, $fields, $map);
             return false;
         }
-        if ($this->hashId && $data[$this->id]) {
-            $data[$this->id] = $this->hashids->encode($data[$this->id]);
+        if ($this->hashIds) {
+            foreach ($this->hashIds as $key) {
+                $data[$key] && $data[$key] = $this->hashidsModel->encode($data[$key]);
+            }
         }
         if ($this->textFields) {
             foreach ($this->textFields as $key => $value) {
@@ -172,8 +178,10 @@ class Model
      */
     public function countD($map, $field = '*')
     {
-        if ($this->hashId && $map[$this->id]) {
-            $map[$this->id] = $this->hashids->decode($map[$this->id])[0];
+        if ($this->hashIds) {
+            foreach ($this->hashIds as $key) {
+                $map[$key] && $map[$key] = $this->hashidsModel->decode($map[$key])[0];
+            }
         }
         $data = $this->dbRead->count($this->table, $field, $map);
         if (!$data) {
@@ -184,11 +192,11 @@ class Model
 
     public function decodeHashId($hash)
     {
-        return $this->hashids->decode($hash)[0];
+        return $this->hashidsModel->decode($hash)[0];
     }
 
     public function encodeHashId($id)
     {
-        return $this->hashids->encode($id);
+        return $this->hashidsModel->encode($id);
     }
 }

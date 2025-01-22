@@ -93,8 +93,8 @@ class Controller
         if (!$id) {
             return $this->error('创建失败', 500);
         }
-        if (!$this->model->hashId) {// 不使用hashId
-            $id = (int)$id;
+        if (in_array($this->model->id, $this->model->hashIds)) {// 使用hashId
+            $id = $this->model->encodeHashId($id);
         }
         return $this->success(['data' => ['id' => $id] ], '创建成功', 201);
     }
