@@ -63,17 +63,12 @@ class Curl
 
         $response = curl_exec($handle); // 执行操作
         $code = curl_getinfo($handle, CURLINFO_HTTP_CODE); // 获取返回的状态码
-//        $data = curl_multi_getcontent($handle); // 获取返回的数据
-        var_dump($response);
-        var_dump($code);
         curl_close ($handle); // 关闭CURL会话
         return ['code' => $code, 'data' => $this->response2arr($response)];
     }
 
     function response2arr($response) {
-        var_dump($response);
         $arr = explode("\r\n\r\n", $response);
-        var_dump($arr);
         return json_decode(array_pop($arr), true);
     }
 }
