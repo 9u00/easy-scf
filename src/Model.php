@@ -87,7 +87,7 @@ class Model
                 }
             }
         }
-        return $list;
+        return $list ?: [];
     }
 
     /**
@@ -138,7 +138,7 @@ class Model
                 $data[$key . '_text'] = is_array($value) ? $value[$data[$key]] : $this->$value($data[$key]);
             }
         }
-        return $data;
+        return $data ?: null;
     }
 
     /**
@@ -153,6 +153,6 @@ class Model
         if (!$data) {
             $this->dbRead->debug()->count($this->table, $field, $map);
         }
-        return $data;
+        return $data ?: 0;
     }
 }
