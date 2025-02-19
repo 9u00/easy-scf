@@ -76,6 +76,7 @@ class Model
         $list = $this->dbRead->select($this->table, $fields, $map);
         if (!$list) {
             $this->dbRead->debug()->select($this->table, $fields, $map);
+            return [];
         }
         if ($this->textFields) {
             foreach ($list as &$v) {
@@ -87,7 +88,7 @@ class Model
                 }
             }
         }
-        return $list ?: [];
+        return $list;
     }
 
     /**
@@ -113,7 +114,7 @@ class Model
      * 默认查询
      * @param $map
      * @param $fields
-     * @return array|false
+     * @return array|null
      */
     public function getD($map, $fields = '*')
     {
@@ -128,7 +129,7 @@ class Model
         $data = $this->dbRead->get($this->table, $fields, $map);
         if (!$data) {
             $this->dbRead->debug()->get($this->table, $fields, $map);
-            return false;
+            return null;
         }
         if ($this->textFields) {
             foreach ($this->textFields as $key => $value) {
@@ -138,7 +139,7 @@ class Model
                 $data[$key . '_text'] = is_array($value) ? $value[$data[$key]] : $this->$value($data[$key]);
             }
         }
-        return $data ?: null;
+        return $data;
     }
 
     /**
