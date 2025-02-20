@@ -70,8 +70,10 @@ class Model
     {
         if ($fields == '*') {
             $fields = $this->fields;
-        } else {
+        } else if (is_array($fields)) {
             $fields = array_intersect($fields, $this->fields);
+        } else if (is_string($fields) && !in_array($fields, $this->fields)) {
+            return [];
         }
         $list = $this->dbRead->select($this->table, $fields, $map);
         if (!$list) {
@@ -120,8 +122,10 @@ class Model
     {
         if ($fields == '*') {
             $fields = $this->fields;
-        } else {
-            $fields = is_array($fields) ? array_intersect($fields, $this->fields) : $fields;
+        } else if (is_array($fields)) {
+            $fields = array_intersect($fields, $this->fields);
+        } else if (is_string($fields) && !in_array($fields, $this->fields)) {
+            return null;
         }
         if (!is_array($map)) {
             $map = [$this->id => $map];
